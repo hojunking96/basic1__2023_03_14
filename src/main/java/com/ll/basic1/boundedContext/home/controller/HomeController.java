@@ -24,13 +24,11 @@ import java.util.*;
 @Controller
 public class HomeController {
     private int count;
-    private List<Person> people;
-    @Autowired
-    private MemberService memberService;
+    private final MemberService memberService;
 
-    public HomeController() {
+    public HomeController(MemberService memberService) {
         count = -1;
-        people = new ArrayList<>();
+        this.memberService=memberService;
     }
 
 
@@ -62,59 +60,6 @@ public class HomeController {
     public int showIncrease() { // 리턴되는 int 값은 String 화 되어서 고객(브라우저)에게 전달된다.
         count++;
         return count;
-    }
-
-    @GetMapping("/home/addPerson")
-    @ResponseBody
-    public String addPerson(String name, int age) {
-        Person p = new Person(name, age);
-
-        System.out.println(p);
-
-        people.add(p);
-
-        return "%d번 사람이 추가되었습니다.".formatted(p.getId());
-    }
-
-    @GetMapping("/home/people")
-    @ResponseBody
-    public List<Person> showPeople() {
-        return people;
-    }
-
-    @GetMapping("/home/removePerson")
-    @ResponseBody
-    public String removePerson(int id) {
-        // person -> person.getId() == id
-        // 위 함수가 참인 엘리먼트(요소) 경우가 존재하면, 해당 요소를 삭제한다.
-        // removed 에는 삭제수행여부가 저장된다.
-        // 조건에 맞는걸 찾았고 삭제까지 되었다면 true, 아니면 false
-        boolean removed = people.removeIf(person -> person.getId() == id);
-
-        if (removed == false) {
-            return "%d번 사람이 존재하지 않습니다.".formatted(id);
-        }
-
-        return "%d번 사람이 삭제되었습니다.".formatted(id);
-    }
-
-    @GetMapping("/home/modifyPerson")
-    @ResponseBody
-    public String modifyPerson(int id, String name, int age) {
-        Person found = people
-                .stream()
-                .filter(p -> p.getId() == id)
-                .findFirst()
-                .orElse(null);
-
-        if (found == null) {
-            return "%d번 사람이 존재하지 않습니다.".formatted(id);
-        }
-
-        found.setName(name);
-        found.setAge(age);
-
-        return "%d번 사람이 수정되었습니다.".formatted(id);
     }
 
     @GetMapping("/home/reqAndResp")
@@ -156,23 +101,3 @@ public class HomeController {
     }
 }
 
-@AllArgsConstructor
-@Getter
-@ToString
-class Person {
-    private static int lastId;
-    private final int id;
-    @Setter
-    private String name;
-    @Setter
-    private int age;
-
-
-    static {
-        lastId = 0;
-    }
-
-    Person(String name, int age) {
-        this(++lastId, name, age);
-    }
-}
