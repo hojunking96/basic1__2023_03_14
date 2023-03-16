@@ -1,22 +1,25 @@
 package com.ll.basic1.boundedContext.member.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import static jakarta.persistence.GenerationType.IDENTITY;
+
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
+@Getter
+@Entity
 public class Member {
-    private static long lastId;
-    private final long id;
-    private final String username;
-    private final String password;
-
-
-    static {
-        lastId = 0;
-    }
-
-    public Member(String username, String password) {
-        this(++lastId, username, password);
-    }
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    private long id;
+    private String username;
+    private String password;
 }
